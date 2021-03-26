@@ -173,7 +173,7 @@ etcd_store_member_id() {
     read -r -a extra_flags <<< "$(etcdctl_auth_flags)"
     extra_flags+=("--endpoints=$(etcdctl_get_endpoints)")
     if retry_while "etcdctl ${extra_flags[*]} member list" >/dev/null 2>&1; then
-        while [[ ! -f "${ETCD_DATA_DIR}/member_id" ]]; do
+        while [[ ! -s "${ETCD_DATA_DIR}/member_id" ]]; do
             etcdctl "${extra_flags[@]}" member list | grep -w "$ETCD_ADVERTISE_CLIENT_URLS" | awk -F "," '{ print $1}' > "${ETCD_DATA_DIR}/member_id"
         done
         debug "Stored member ID: $(cat "${ETCD_DATA_DIR}/member_id")"
